@@ -49,7 +49,8 @@ others in their own tickets.
 - `parser` and `hint` come from `causeOf` in `causes.ts`: the tenant's locale and booking form
   decide it, not the intake tag. Intake guesses from the reporter's browser and disagrees often.
 - `one-day-move` is the desk's own list in `desk-notes.json`. Each of those reports was read: none of them
-  is a day/month swap.
+  is a day/month swap. Like the desk's view, the table still counts them under the cause they are filed
+  under, too.
 - The numbers above are built from the data when the page renders. When more reports arrive, they
   update.
 

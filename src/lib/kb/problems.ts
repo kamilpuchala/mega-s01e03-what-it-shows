@@ -1,6 +1,6 @@
-// The problems inside one merged ticket. causes.ts places a report by its tenant; a report the desk
-// read as a one-day move (desk-notes.json) is not a day/month flip at all, so it is its own problem
-// here instead of a footnote under `parser`.
+// The problems inside one merged ticket. causes.ts places a report by its tenant, and the desk counts
+// it there. A report the desk read as a one-day move (desk-notes.json) is not a day/month flip at all,
+// so it also gets its own row, while it stays counted where it is filed.
 import { groupByCause, uniqueById, type Cause, type Report, type Tenant } from '#lib/kb/causes';
 
 export type Problem = Cause | 'one-day-move' | 'unplaced';
@@ -21,7 +21,6 @@ export function problemsIn(
 ): { merged: number; rows: ProblemRow[] } {
   const merged = uniqueById(all).filter((r) => r.mergedInto === ticket);
   const moved = merged.filter((r) => oneDayMove.includes(r.id));
-  const flips = merged.filter((r) => !oneDayMove.includes(r.id));
 
   const row = (problem: Problem, rs: Report[]): ProblemRow => {
     const days = rs.map((r) => r.receivedAt.slice(0, 10)).sort();
@@ -29,7 +28,7 @@ export function problemsIn(
   };
 
   const rows = [
-    ...groupByCause(flips, tenantOf).map((g) => row(g.cause, g.reports)),
+    ...groupByCause(merged, tenantOf).map((g) => row(g.cause, g.reports)),
     ...(moved.length ? [row('one-day-move', moved)] : []),
   ].sort((a, b) => b.reports.length - a.reports.length);
 

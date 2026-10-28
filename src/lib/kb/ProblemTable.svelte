@@ -9,12 +9,12 @@
   let { ticket, issues = {} }: { ticket: number; issues?: Partial<Record<Problem, string>> } = $props();
 
   const result = $derived(problemsIn(reports as Report[], ticket, tenantOf, notes.oneDayMove));
-  const counted = $derived(result.rows.reduce((n, r) => n + r.reports.length, 0));
+  const moved = $derived(result.rows.find((r) => r.problem === 'one-day-move')?.reports.length ?? 0);
 </script>
 
 <p class="sum">
   <strong>{result.merged}</strong> reports in #{ticket} ·
-  <strong>{result.rows.length}</strong> problems · <strong>{counted}</strong> placed
+  <strong>{result.rows.length}</strong> problems
 </p>
 
 <table>
@@ -34,7 +34,12 @@
   </tbody>
 </table>
 
+{#if moved}
+  <p class="note">The {moved} <code>one-day-move</code> reports are also counted under the cause they are filed under, as the desk counts them.</p>
+{/if}
+
 <style>
   .sum { font-size: 1.1rem; }
+  .note { color: var(--muted); font-size: 0.85em; }
   .none { color: var(--warn); font-weight: 600; }
 </style>
